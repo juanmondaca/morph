@@ -33,9 +33,14 @@ if __name__ == "__main__":
     parser.add_argument('--use_alpha', default=False, help='Add an alpha channel for masking', type=bool)
 
     args, other_args = parser.parse_known_args()
-
-    landmarks_model_path = unpack_bz2(get_file('shape_predictor_68_face_landmarks.dat.bz2',
-                                               LANDMARKS_MODEL_URL, cache_subdir='temp'))
+    
+    ## modificacion en la ruta del archivo predictor
+    path_archivo_predictor = "data/shape_predictor_68_face_landmarks.dat.bz2"
+    
+    #landmarks_model_path = unpack_bz2(get_file('shape_predictor_68_face_landmarks.dat.bz2',LANDMARKS_MODEL_URL, cache_subdir='temp'))
+    landmarks_model_path = unpack_bz2(path_archivo_predictor)
+    ##
+    
     RAW_IMAGES_DIR = args.raw_dir
     ALIGNED_IMAGES_DIR = args.aligned_dir
 
