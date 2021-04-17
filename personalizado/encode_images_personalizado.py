@@ -112,10 +112,19 @@ def main():
     os.makedirs(args.video_dir, exist_ok=True)
 
     # Initialize generator and perceptual model
+    
+    ## modificacion. Ahora karras2019stylegan-ffhq-1024x1024.pkl es un archivo en directorio data.
+    path_archivo_ffhq = 'data/karras2019stylegan-ffhq-1024x1024.pkl'
+    print('Leyendo archivo ffhq 1024x1024 desde :-> ', path_archivo_ffhq)
+    
     tflib.init_tf()
-    with dnnlib.util.open_url(args.model_url, cache_dir=config.cache_dir) as f:
+    with path_archivo_ffhq as f:
         generator_network, discriminator_network, Gs_network = pickle.load(f)
+    #with dnnlib.util.open_url(args.model_url, cache_dir=config.cache_dir) as f:
+    #    generator_network, discriminator_network, Gs_network = pickle.load(f)
 
+    ##
+    
     generator = Generator(Gs_network, args.batch_size, clipping_threshold=args.clipping_threshold, tiled_dlatent=args.tile_dlatents, model_res=args.model_res, randomize_noise=args.randomize_noise)
     if (args.dlatent_avg != ''):
         generator.set_dlatent_avg(np.load(args.dlatent_avg))
