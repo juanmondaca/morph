@@ -114,16 +114,25 @@ def main():
     # Initialize generator and perceptual model
     
     ## modificacion. Ahora karras2019stylegan-ffhq-1024x1024.pkl es un archivo en directorio data.
-    path_archivo_ffhq = 'data/karras2019stylegan-ffhq-1024x1024.pkl'
-    print('Leyendo archivo ffhq 1024x1024 desde :-> ', path_archivo_ffhq)
+    path_archivo_pickle_ffhq = 'data/karras2019stylegan-ffhq-1024x1024.pkl'
+    archivo_pickle_ffhq      = open(path_archivo_pickle_ffhq,'rb')     
+    print(' archivo ffhq 1024x1024 desde :-> ', archivo_pickle_ffhq)
     
     tflib.init_tf()
-    with path_archivo_ffhq as f:
-        generator_network, discriminator_network, Gs_network = pickle.load(f)
+    #import io
+    #with open(archivo_ffhq.encode('utf-8')) as f:
+    generator_network, discriminator_network, Gs_network = pickle.load(archivo_pickle_ffhq) #pickle.load(f)
+    ## crea el directorio para guardar el cache
+    os.makedirs("cache",exist_ok = True)
+    archivo_cache = os.path.join("cache",path_archivo_pickle_ffhq + "_" + "cache")
+    archivo_temp = os.path.join("cache","tmp_" + uuid.uuid4().hex + "_" + hashlib.md5(path_archivo_pickle_ffhq.encode("utf-8")).hexdigest())
+    with open(archivo_temp,"wb") as f:
+        f.write(archivo_ffhq)
+    os.replace(archivo_cache,archivo_temp)
     #with dnnlib.util.open_url(args.model_url, cache_dir=config.cache_dir) as f:
     #    generator_network, discriminator_network, Gs_network = pickle.load(f)
 
-    ##
+    ## fin modificacion
     
     generator = Generator(Gs_network, args.batch_size, clipping_threshold=args.clipping_threshold, tiled_dlatent=args.tile_dlatents, model_res=args.model_res, randomize_noise=args.randomize_noise)
     if (args.dlatent_avg != ''):
@@ -131,9 +140,17 @@ def main():
 
     perc_model = None
     if (args.use_lpips_loss > 0.00000001):
+      ## modificacion: el archivo vgg16_zhang_perceptual.pkl no se obtiene desde una url
+      path_archivo_pickle_vgg = 'data/vgg16_zhang_perceptual.pkl'
+      archivo_pickle_vgg      = open(path_archivo_pickle_vgg,'rb')
+      print(' archivo vgg desde :-> ', archivo_pickle_vgg)
       ## https://drive.google.com/uc?id=1N2-m9qszOeVC9Tq77WxsLnuWwOedQiD2
-        with dnnlib.util.open_url('https://drive.google.com/uc?id=1x0nMDdYmH9Ykv4sTOK-EmwOvTYxOygfQ', cache_dir=config.cache_dir) as f:
-            perc_model =  pickle.load(f)
+      ##  with dnnlib.util.open_url('https://drive.google.com/uc?id=1x0nMDdYmH9Ykv4sTOK-EmwOvTYxOygfQ', cache_dir=config.cache_dir) as f:
+      ##      perc_model =  pickle.load(f)
+      perc_model  = pickle.load(archivo_pickle_vgg)
+
+    ## fin modificacion
+
     perceptual_model = PerceptualModel(args, perc_model=perc_model, batch_size=args.batch_size)
     perceptual_model.build_perceptual_model(generator, discriminator_network)
 
