@@ -37,8 +37,8 @@ def main():
     parser.add_argument('--mask_dir', default='masks', help='Directory for storing optional masks')
     parser.add_argument('--load_last', default='', help='Start with embeddings from directory')
     parser.add_argument('--dlatent_avg', default='', help='Use dlatent from file specified here for truncation instead of dlatent_avg from Gs')
-    ## https://drive.google.com/uc?id=1MEGjdvVpUsu1jB4zrXZN7Y4kBBOzizDQ
-    parser.add_argument('--model_url', default='https://drive.google.com/uc?id=1u_NvdbpMKODEPtD43CQlrYq164ar1AlA', help='Fetch a StyleGAN model to train on from this URL') # karras2019stylegan-ffhq-1024x1024.pkl
+    ## https://drive.google.com/uc?id=1MEGjdvVpUsu1jB4zrXZN7Y4kBBOzizDQ   https://drive.google.com/uc?id=1u_NvdbpMKODEPtD43CQlrYq164ar1AlA
+    parser.add_argument('--model_url', default='data/karras2019stylegan-ffhq-1024x1024.pkl', help='Fetch a StyleGAN model to train on from this URL') # karras2019stylegan-ffhq-1024x1024.pkl
     parser.add_argument('--model_res', default=1024, help='The dimension of images in the StyleGAN model', type=int)
     parser.add_argument('--batch_size', default=1, help='Batch size for generator and perceptual model', type=int)
     parser.add_argument('--optimizer', default='ggt', help='Optimization algorithm used for optimizing dlatents')
@@ -114,23 +114,23 @@ def main():
     # Initialize generator and perceptual model
     
     ## modificacion. Ahora karras2019stylegan-ffhq-1024x1024.pkl es un archivo en directorio data.
-    path_archivo_pickle_ffhq = 'data/karras2019stylegan-ffhq-1024x1024.pkl'
-    archivo_pickle_ffhq      = open(path_archivo_pickle_ffhq,'rb')     
-    print(' archivo ffhq 1024x1024 desde :-> ', archivo_pickle_ffhq)
+    ## path_archivo_pickle_ffhq = 'data/karras2019stylegan-ffhq-1024x1024.pkl'
+    ## archivo_pickle_ffhq      = open(path_archivo_pickle_ffhq,'rb')     
+    print(' archivo ffhq 1024x1024 desde data/karras2019stylegan-ffhq-1024x1024.pkl')
     
     tflib.init_tf()
-    #import io
-    #with open(archivo_ffhq.encode('utf-8')) as f:
-    generator_network, discriminator_network, Gs_network = pickle.load(archivo_pickle_ffhq) #pickle.load(f)
+    
+    ## generator_network, discriminator_network, Gs_network = pickle.load(archivo_pickle_ffhq) #pickle.load(f)
     ## crea el directorio para guardar el cache
-    os.makedirs("cache",exist_ok = True)
-    archivo_cache = os.path.join("cache",path_archivo_pickle_ffhq + "_" + "cache")
-    archivo_temp = os.path.join("cache","tmp_" + uuid.uuid4().hex + "_" + hashlib.md5(path_archivo_pickle_ffhq.encode("utf-8")).hexdigest())
-    with open(archivo_temp,"wb") as f:
-        f.write(archivo_ffhq)
-    os.replace(archivo_cache,archivo_temp)
-    #with dnnlib.util.open_url(args.model_url, cache_dir=config.cache_dir) as f:
-    #    generator_network, discriminator_network, Gs_network = pickle.load(f)
+    ## os.makedirs("cache",exist_ok = True)
+    ## archivo_cache = os.path.join("cache",path_archivo_pickle_ffhq + "_" + "cache")
+    ## archivo_temp = os.path.join("cache","tmp_" + uuid.uuid4().hex + "_" + hashlib.md5(path_archivo_pickle_ffhq.encode("utf-8")).hexdigest())
+    ## with open(archivo_temp,"wb") as f:
+    ##    f.write(archivo_ffhq)
+    ## os.replace(archivo_cache,archivo_temp)
+
+    with dnnlib.util.open_url(args.model_url, cache_dir=config.cache_dir) as f:
+        generator_network, discriminator_network, Gs_network = pickle.load(f)
 
     ## fin modificacion
     
