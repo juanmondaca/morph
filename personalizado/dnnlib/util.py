@@ -348,14 +348,14 @@ def open_url(url: str, cache_dir: str = None, num_attempts: int = 10, verbose: b
     if not is_url(url) and os.path.isfile(url):
         print('No es una URL ... es una archivo en el file system')
         # Lookup from cache.
-        url_name = url
-        url_data = open(url,'rb')
-        url_md5  = hashlib.md5(url.encode("utf-8")).hexdigest()
-        if cache_dir is not None:
-            cache_files = glob.glob(os.path.join(cache_dir, url_md5 + "_*"))
-            if len(cache_files) == 1:
-                return open(cache_files[0], "rb")
-        ##return open(url, 'rb')
+        #url_name = url
+        #url_data = open(url,'rb')
+        #url_md5  = hashlib.md5(url.encode("utf-8")).hexdigest()
+        #if cache_dir is not None:
+        #    cache_files = glob.glob(os.path.join(cache_dir, url_md5 + "_*"))
+        #    if len(cache_files) == 1:
+        #        return open(cache_files[0], "rb")
+        return open(url, 'rb')
     ## caso en que el archivo se obtiene desde una url
     else:
         assert is_url(url)
